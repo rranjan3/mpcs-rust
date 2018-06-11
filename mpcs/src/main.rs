@@ -53,12 +53,14 @@ fn main() -> io::Result<()>{
 	let port = matches.value_of("port").unwrap_or("8008");
 	println!("Value for port: {}", port);
 	
+	//Try reading messages from stdin
 	let mut buffer = String::new();
 	println!("Enter your message : ");
 	io::stdin().read_line(&mut buffer)?;
 
 	println!("You typed in : {}",buffer );
 
+	//Spawning a thread
 	let th1 = thread::spawn( move || {
 	
 	});	
