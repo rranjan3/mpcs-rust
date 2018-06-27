@@ -1,5 +1,3 @@
-
-
 mod server;
 mod client;
 
@@ -10,20 +8,10 @@ use std::process::exit;
 use std::io::{self, Read};
 use clap::{Arg,App};
 use std::thread;
+use std::time::Duration;
+use std::sync::mpsc::channel;
 
 fn main() -> io::Result<()>{
-
-	
-
-
-/*	let args : Vec<String> = env::args().collect();
-	if args.len() != 2 {
-		println!("Error: Need to provide ip & port no");
-		exit(1);
-	}
-	let port = &args[1];
-	println!("Port number to use :: {:?}", port);
-*/
 	
 	let matches = App::new("Multiparty Chat Server")
                           .version("1.0")
@@ -60,11 +48,37 @@ fn main() -> io::Result<()>{
 
 	println!("You typed in : {}",buffer );
 
+	//Creating a channel
+	let (send, recv) = channel();
+
+
 	//Spawning a thread
 	let th1 = thread::spawn( move || {
+		let handle = thread::current();
+		println!("This is thread : {:?} ",handle.name());	
+		send.send("\nHey!! from the thread...").unwrap();
+		thread::sleep(Duration::from_secs(2)); // block for two seconds
+		send.send("Delayed for 2 seconds\n").unwrap();
+	});
 	
-	});	
+
+	println!("{}", recv.recv().unwrap()); // Received immediately
+	println!("Waiting...");
+	println!("{}", recv.recv().unwrap()); // Received after 2 seconds
+	
+	thread::sleep(Duration::from_secs(5));	
 	
 	Ok(())
 
 }
+
+#[cfg(tests)]
+
+mod tests{ 
+ #[test]
+ fn test_dummy() {
+	assert_eq!(4, 2+2);
+ }
+
+}
+
